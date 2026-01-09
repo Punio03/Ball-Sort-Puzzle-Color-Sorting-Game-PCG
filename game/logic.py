@@ -1,50 +1,72 @@
 from typing import Optional
 
+
 class Flask:
-    def __init__(self, max_size: int, balls: Optional[list[int]]=None) -> None:
+    def __init__(self, max_size: int, balls: Optional[list[int]] = None) -> None:
         self.balls = balls if balls else []
         self.MAX_SIZE = max_size
-        
+
     def remove(self) -> int:
         return self.balls.pop()
 
-    def add(self, color) -> None:
+    def add(self, color: int) -> None:
         self.balls.append(color)
 
     def size(self) -> int:
         return len(self.balls)
-    
+
     def empty(self) -> bool:
-        return self.size() != 0
-    
+        return self.size() == 0
+
     def full(self) -> bool:
-        return self.size() < self.MAX_SIZE
+        return self.size() == self.MAX_SIZE
+
+    def top(self) -> Optional[int]:
+        if self.empty():
+            return None
+        return self.balls[-1]
+
 
 class Logic:
-    def __init__(self, board: Optional[list[Flask]]=None) -> None:
+    def __init__(self, board: Optional[list[Flask]] = None) -> None:
         self.board = board if board else []
-        self.history = []
+        self.history: list[tuple[int, int]] = []
+
+    def can_move(self, from_id: int, to_id: int) -> bool:
+        if from_id == to_id:
+            return False
+
+        src = self.board[from_id]
+        dst = self.board[to_id]
+
+        if src.empty() or dst.full():
+            return False
+
+        if dst.empty():
+            return True
+
+        return src.top() == dst.top()
 
     def move(self, from_id: int, to_id: int) -> bool:
-        from_flask = self.board[from_id]
-        to_flask = self.board[to_id]
+        if not self.can_move(from_id, to_id):
+            return False
 
-        if not from_flask.empty() and not to_flask.full():
-            self.history.append((from_id, to_id))
-            color = from_flask.remove()
-            to_flask.add(color)
-            
-            return True
-        
-        return False
-    
+        color = self.board[from_id].remove()
+        self.board[to_id].add(color)
+        self.history.append((from_id, to_id))
+        return True
+
     def undo(self) -> None:
+        if not self.history:
+            return
         from_id, to_id = self.history.pop()
-        self.move(to_id, from_id)
-    
+        color = self.board[to_id].remove()
+        self.board[from_id].add(color)
+
     def is_game_over(self) -> bool:
         for flask in self.board:
+            if flask.empty():
+                continue
             if len(set(flask.balls)) != 1:
                 return False
-        
         return True
