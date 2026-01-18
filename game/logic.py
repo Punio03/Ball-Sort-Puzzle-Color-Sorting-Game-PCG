@@ -26,6 +26,9 @@ class Flask:
             return None
         return self.balls[-1]
 
+    def clone(self):
+        return Flask(self.MAX_SIZE, self.balls)
+
 
 class Logic:
     def __init__(self, board: Optional[list[Flask]] = None) -> None:
@@ -34,6 +37,14 @@ class Logic:
 
     def can_move(self, from_id: int, to_id: int) -> bool:
         if from_id == to_id:
+            return False
+
+        if (
+            from_id < 0
+            or from_id >= len(self.board)
+            or to_id < 0
+            or to_id >= len(self.board)
+        ):
             return False
 
         src = self.board[from_id]
@@ -67,6 +78,12 @@ class Logic:
         for flask in self.board:
             if flask.empty():
                 continue
-            if len(set(flask.balls)) != 1:
+            if len(set(flask.balls)) != 1 or not flask.full():
                 return False
         return True
+
+    def get_state_tuple(self):
+        state = []
+        for f in self.board:
+            state.append(tuple(f.balls))
+        return tuple(sorted(state))
