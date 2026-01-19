@@ -1,24 +1,50 @@
-from collections import deque
+import heapq
 from typing import Tuple, List
 
 from game.logic import Logic
 from solvers.base_solver import BaseSolver
 
 
-class BFSSolver(BaseSolver):
+class AStarSolver(BaseSolver):
+    def __init__(self, max_steps=10000):
+        self.max_steps = max_steps
+
+    @staticmethod
+    def _calculate_heuristic(state_matrix, max_capacity):
+        penalty = 0
+        for tube in state_matrix:
+            if not tube:
+                continue
+
+            prev_color = tube[0]
+            changes = 0
+            for color in tube[1:]:
+                if color != prev_color:
+                    changes += 1
+                prev_color = color
+
+            penalty += changes * 10
+
+            if len(set(tube)) == 1 and len(tube) < max_capacity:
+                penalty += max_capacity - len(tube)
+        return penalty
+
     def solve(self, logic_start: Logic) -> Tuple[bool, List[Tuple[int, int]]]:
         initial_board = [list(f.balls) for f in logic_start.board]
         max_cap = logic_start.board[0].MAX_SIZE
-        queue = deque([(initial_board, [])])
+
+        start_h = self._calculate_heuristic(initial_board, max_cap)
+        queue = []
+        heapq.heappush(queue, (start_h, 0, initial_board, []))
+
         visited = {self._get_canonical(initial_board)}
-        nodes_checked = 0
-        MAX_NODES = 100000
+        nodes_explored = 0
 
         while queue:
-            current_board, path = queue.popleft()
-            nodes_checked += 1
+            est_cost, moves_count, current_board, path = heapq.heappop(queue)
+            nodes_explored += 1
 
-            if nodes_checked > MAX_NODES:
+            if nodes_explored > self.max_steps:
                 return False, []
 
             is_win = True
@@ -56,6 +82,10 @@ class BFSSolver(BaseSolver):
 
                             if canonical not in visited:
                                 visited.add(canonical)
-                                queue.append((new_board, path + [(i, j)]))
+                                h = self._calculate_heuristic(new_board, max_cap)
+                                g = moves_count + 1
+                                heapq.heappush(
+                                    queue, (g + h, g, new_board, path + [(i, j)])
+                                )
 
         return False, []

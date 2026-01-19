@@ -6,12 +6,13 @@ from agents.human_agent import HumanAgent
 from agents.solver_agent import SolverAgent
 from game.game_env import GameEnv
 from generators.random_generator import RandomGenerator
+from solvers.astar_solver import AStarSolver
 from solvers.bfs_solver import BFSSolver
 
 
 def main():
-    solver = BFSSolver()
-    generator = RandomGenerator(solver, num_flasks=10, num_colors=8)
+    solver = AStarSolver()
+    generator = RandomGenerator(solver, num_flasks=22, num_colors=20)
     logic = generator.generate(min_difficulty=15)
 
     # agent = HumanAgent()
