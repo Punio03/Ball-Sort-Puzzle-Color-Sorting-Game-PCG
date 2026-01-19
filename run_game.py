@@ -3,6 +3,7 @@ import time
 import pygame
 
 from agents.human_agent import HumanAgent
+from agents.solver_agent import SolverAgent
 from game.game_env import GameEnv
 from generators.random_generator import RandomGenerator
 from solvers.bfs_solver import BFSSolver
@@ -12,7 +13,9 @@ def main():
     solver = BFSSolver()
     generator = RandomGenerator(solver, num_flasks=10, num_colors=8)
     logic = generator.generate(min_difficulty=15)
-    agent = HumanAgent()
+
+    # agent = HumanAgent()
+    agent = SolverAgent(solver, delay=1.0)
 
     env = GameEnv(render_mode=True)
     env.load_logic(logic)
@@ -35,7 +38,7 @@ def main():
 
         action = agent.get_action(env, events)
         if action is not None:
-            state, reward, done = env.step(action)
+            env.step(action)
 
     env.close()
 
