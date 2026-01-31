@@ -11,5 +11,5 @@ class BaseGenerator(ABC):
         self.num_colors = num_colors
 
     @abstractmethod
-    def generate(self, min_difficulty: int) -> Logic:
+    def generate(self, size: int, min_difficulty: int) -> Logic:
         pass

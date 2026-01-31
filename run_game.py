@@ -6,14 +6,15 @@ from agents.human_agent import HumanAgent
 from agents.solver_agent import SolverAgent
 from game.game_env import GameEnv
 from generators.random_generator import RandomGenerator
+from generators.naive_reverse_walk import NaiveReverseWalkGenerator
 from solvers.astar_solver import AStarSolver
 from solvers.bfs_solver import BFSSolver
 
 
 def main():
     solver = AStarSolver()
-    generator = RandomGenerator(solver, num_flasks=22, num_colors=20)
-    logic = generator.generate(min_difficulty=15)
+    generator = NaiveReverseWalkGenerator(solver, num_flasks=22, num_colors=20)
+    logic = generator.generate(size=4, min_difficulty=15)
 
     # agent = HumanAgent()
     agent = SolverAgent(solver, delay=1.0)
