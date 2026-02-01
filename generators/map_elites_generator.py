@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from game.logic import Logic, Flask
 from generators.base_generator import EvolutionaryGenerator
-from generators.naive_random_walk_generator import NaiveRandomWalkGenerator
+from generators.random_generator import RandomGenerator
 
 class MapElitesGenerator(EvolutionaryGenerator):
     def fitness(self, chromosome):
@@ -55,8 +55,8 @@ class MapElitesGenerator(EvolutionaryGenerator):
         avg_entropy = total_entropy / total_flasks
         homogeneity_ratio = num_homogeneous / total_flasks
 
-        entropy_bin = min(9, int(avg_entropy * 10))
-        homogeneity_bin = min(9, int(homogeneity_ratio * 10))
+        entropy_bin = min(99, int(avg_entropy * 100))
+        homogeneity_bin = min(99, int(homogeneity_ratio * 100))
         
         return (entropy_bin, homogeneity_bin)
     
@@ -93,17 +93,17 @@ class MapElitesGenerator(EvolutionaryGenerator):
 
         self.min_difficulty = min_difficulty
 
-        epochs = kwargs.get('epochs', 1000)
-        mut_rate = kwargs.get('mut_rate', 0.01)
-        batch_size = kwargs.get('batch_size', 100)
+        epochs = kwargs.get('epochs', 500)
+        mut_rate = kwargs.get('mut_rate', 0.5)
+        batch_size = kwargs.get('batch_size', 10)
 
-        generator = NaiveRandomWalkGenerator(self.solver, self.num_flasks, self.num_colors)
-        population = [generator.generate(size, 5) for _ in range(batch_size)]
+        generator = RandomGenerator(self.solver, self.num_flasks, self.num_colors)
+        population = [generator.generate(size, 50) for _ in range(batch_size)]
         
         for chromosome in population:
             self.place(map_elites, chromosome)
 
-        with open('save.csv', 'w') as f:
+        with open('save3.csv', 'w') as f:
             f.write('epoch;avg;max;min;size\n')
             for epoch in tqdm(range(epochs)):
                 population = self.update(map_elites, mut_rate, batch_size)
@@ -115,11 +115,15 @@ class MapElitesGenerator(EvolutionaryGenerator):
 
         best_map = None
         best_score = 0
+        
+        with open('map_es_flasks3.txt', 'w') as f:
+            for chromosome in population:
+                for flask in chromosome.board:
+                    f.write(f"{flask.balls} ")
+                f.write("\n")
+                score = self.fitness(chromosome)
 
-        for chromosome in population:
-            score = self.fitness(chromosome)
+                if score > best_score:
+                    best_map = chromosome
 
-            if score > best_score:
-                best_map = chromosome
-
-        return [chromosome]
+        return [best_map]
