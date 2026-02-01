@@ -9,6 +9,7 @@ from game.logic import Logic, Flask
 from generators.base_generator import EvolutionaryGenerator
 from generators.naive_random_walk_generator import NaiveRandomWalkGenerator
 
+
 class MapElitesGenerator(EvolutionaryGenerator):
     def fitness(self, chromosome):
         score = 0
@@ -18,48 +19,48 @@ class MapElitesGenerator(EvolutionaryGenerator):
         if solvable:
             score += 100
 
-        score += (len(path) - self.min_difficulty)
+        score += len(path) - self.min_difficulty
 
         return score
-    
+
     def features(self, chromosome: Logic) -> tuple:
         total_entropy = 0
         num_homogeneous = 0
         empty_flasks = 0
-        
+
         max_entropy = math.log2(self.num_colors)
-        
+
         for flask in chromosome.board:
             if len(flask.balls) == 0:
                 empty_flasks += 1
                 continue
-            
+
             counts = {}
             for ball in flask.balls:
                 counts[ball] = counts.get(ball, 0) + 1
-            
+
             if len(counts) == 1:
                 num_homogeneous += 1
-            
+
             flask_size = len(flask.balls)
             entropy = 0
             for count in counts.values():
                 p = count / flask_size
                 if p > 0:
                     entropy -= p * math.log2(p)
-            
+
             total_entropy += entropy / max_entropy
-        
+
         total_flasks = len(chromosome.board)
-        
+
         avg_entropy = total_entropy / total_flasks
         homogeneity_ratio = num_homogeneous / total_flasks
 
         entropy_bin = min(9, int(avg_entropy * 10))
         homogeneity_bin = min(9, int(homogeneity_ratio * 10))
-        
+
         return (entropy_bin, homogeneity_bin)
-    
+
     def place(self, map_elites: dict, chromosome: Logic) -> None:
         score = self.fitness(chromosome)
 
@@ -79,39 +80,36 @@ class MapElitesGenerator(EvolutionaryGenerator):
             if random.random() < mut_rate:
                 chromosome = Logic.mutate(chromosome)
                 self.place(map_elites, chromosome)
-        
+
         population = list(map_elites.values())
         return population
-            
-    def generate(
-        self,
-        size: int,
-        min_difficulty: int,
-        **kwargs
-    ) -> Logic:
+
+    def generate(self, min_difficulty: int, **kwargs) -> Logic:
         map_elites = {}
 
         self.min_difficulty = min_difficulty
 
-        epochs = kwargs.get('epochs', 1000)
-        mut_rate = kwargs.get('mut_rate', 0.01)
-        batch_size = kwargs.get('batch_size', 100)
+        epochs = kwargs.get("epochs", 1000)
+        mut_rate = kwargs.get("mut_rate", 0.01)
+        batch_size = kwargs.get("batch_size", 100)
 
-        generator = NaiveRandomWalkGenerator(self.solver, self.num_flasks, self.num_colors)
-        population = [generator.generate(size, 5) for _ in range(batch_size)]
-        
+        generator = NaiveRandomWalkGenerator(
+            self.solver, self.num_flasks, self.num_colors
+        )
+        population = [generator.generate(self.flask_size, 5) for _ in range(batch_size)]
+
         for chromosome in population:
             self.place(map_elites, chromosome)
 
-        with open('save.csv', 'w') as f:
-            f.write('epoch;avg;max;min;size\n')
+        with open("save.csv", "w") as f:
+            f.write("epoch;avg;max;min;size\n")
             for epoch in tqdm(range(epochs)):
                 population = self.update(map_elites, mut_rate, batch_size)
                 avg = np.average([self.fitness(x) for x in population])
                 maxi = np.max([self.fitness(x) for x in population])
                 mini = np.min([self.fitness(x) for x in population])
                 size = len(population)
-                f.write(f'{epoch};{avg};{maxi};{mini};{size}\n')
+                f.write(f"{epoch};{avg};{maxi};{mini};{size}\n")
 
         best_map = None
         best_score = 0

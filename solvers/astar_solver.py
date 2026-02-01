@@ -6,9 +6,6 @@ from solvers.base_solver import BaseSolver
 
 
 class AStarSolver(BaseSolver):
-    def __init__(self, max_steps=10000):
-        self.max_steps = max_steps
-
     @staticmethod
     def _calculate_heuristic(state_matrix, max_capacity):
         penalty = 0
@@ -43,9 +40,6 @@ class AStarSolver(BaseSolver):
         while queue:
             est_cost, moves_count, current_board, path = heapq.heappop(queue)
             nodes_explored += 1
-
-            if nodes_explored > self.max_steps:
-                return False, []
 
             is_win = True
             for tube in current_board:
