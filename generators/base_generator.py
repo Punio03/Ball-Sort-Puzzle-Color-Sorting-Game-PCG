@@ -79,6 +79,6 @@ class EvolutionaryGenerator(BaseGenerator):
         self,
         size: int,
         min_difficulty: int,
-        epochs: int,
+        epochs: int
     ) -> Logic:
         pass
