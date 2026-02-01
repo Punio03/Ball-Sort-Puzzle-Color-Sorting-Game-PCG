@@ -26,7 +26,7 @@ class AStarSolver(BaseSolver):
                 penalty += max_capacity - len(tube)
         return penalty
 
-    def solve(self, logic_start: Logic) -> Tuple[bool, List[Tuple[int, int]]]:
+    def solve(self, logic_start: Logic) -> Tuple[bool, int, List[Tuple[int, int]]]:
         initial_board = [list(f.balls) for f in logic_start.board]
         max_cap = logic_start.board[0].MAX_SIZE
 
@@ -50,7 +50,7 @@ class AStarSolver(BaseSolver):
                     break
 
             if is_win:
-                return True, path
+                return True, nodes_explored, path
 
             for i in range(len(current_board)):
                 src = current_board[i]
@@ -82,4 +82,4 @@ class AStarSolver(BaseSolver):
                                     queue, (g + h, g, new_board, path + [(i, j)])
                                 )
 
-        return False, []
+        return False, nodes_explored, []

@@ -6,7 +6,7 @@ from generators.base_generator import BaseGenerator
 
 
 class NaiveRandomWalkGenerator(BaseGenerator):
-    def generate(self, difficulty_steps: int, generations: Optional[int]) -> Logic:
+    def generate(self, difficulty_steps: int = 250, generations: Optional[int] = None) -> Logic:
         flasks = self._create_solved_board()
         candidate_logic = Logic(flasks)
 
