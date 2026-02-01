@@ -113,11 +113,15 @@ class MapElitesGenerator(EvolutionaryGenerator):
 
         best_map = None
         best_score = 0
+        
+        with open('map_es_flasks3.txt', 'w') as f:
+            for chromosome in population:
+                for flask in chromosome.board:
+                    f.write(f"{flask.balls} ")
+                f.write("\n")
+                score = self.fitness(chromosome)
 
-        for chromosome in population:
-            score = self.fitness(chromosome)
+                if score > best_score:
+                    best_map = chromosome
 
-            if score > best_score:
-                best_map = chromosome
-
-        return [chromosome]
+        return [best_map]
