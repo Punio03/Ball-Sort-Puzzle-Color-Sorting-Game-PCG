@@ -1,27 +1,16 @@
 import random
+from typing import Optional
 
-from game.logic import Logic, Flask
+from game.logic import Logic
 from generators.base_generator import BaseGenerator
 
 
 class NaiveRandomWalkGenerator(BaseGenerator):
-    def generate(self, size: int, min_difficulty: int) -> Logic:
-        balls = []
-        for c in range(self.num_colors):
-            balls.extend([c] * size)
-        
-        flasks = []
-        idx = 0
-        for _ in range(self.num_colors):
-            flasks.append(Flask(size, balls[idx : idx + 4]))
-            idx += size
-
-        for _ in range(self.num_flasks - self.num_colors):
-            flasks.append(Flask(size, []))
-
+    def generate(self, difficulty_steps: int, generations: Optional[int]) -> Logic:
+        flasks = self._create_solved_board()
         candidate_logic = Logic(flasks)
-    
-        for _ in range(min_difficulty):
+
+        for _ in range(difficulty_steps):
             moves = candidate_logic.get_possible_moves()
             move = random.choice(moves)
 

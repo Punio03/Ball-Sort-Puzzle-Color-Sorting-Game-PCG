@@ -71,13 +71,9 @@ class BaseGenerator(ABC):
 
 
 class EvolutionaryGenerator(BaseGenerator):
-    def __init__(self, solver, num_flasks, num_colors):
-        super().__init__(solver, num_flasks, num_colors)
-
     @override
     def generate(
         self,
-        size: int,
         min_difficulty: int,
         epochs: int
     ) -> Logic:
