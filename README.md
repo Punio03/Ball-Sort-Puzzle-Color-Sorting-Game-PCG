@@ -65,6 +65,10 @@ Each of the generators proposes content population of size $n$. Then we take ave
 | Es                   |  100 |   48.466 | 8.734e-71 | Yes          |
 | MapElites            |   24 |   24.018 | 8.634e-18 | Yes          |
 ```
+
+## 6. Conclusions
+Given observed results, we can conclude that the MapElites generator performed significatly better than the rest. Standard PCG evolutionary algorithm perfomed better than standard state-space search solutions. Future work might involve finding better heuristics for search-based approaches and adding more generators for comparison.
+
 ### 6. How to run the code
 ```
 pip install -r requirements.txt
