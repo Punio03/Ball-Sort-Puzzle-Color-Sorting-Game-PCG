@@ -14,7 +14,7 @@ class SolverAgent(BaseAgent):
 
     def get_action(self, env, events: List[Any]) -> Optional[Tuple[int, int]]:
         if not self.moves_queue:
-            solved, path = self.solver.solve(env.logic)
+            solved, _,path = self.solver.solve(env.logic)
             if solved:
                 self.moves_queue = path
             else:
