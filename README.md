@@ -57,7 +57,14 @@ Each of the generators proposes content population of size $n$. Then we take ave
 
 ## 5. Results
 ![Results](results.png)
-
+```
+| Algorithm            |    n |   T-stat |   P-value | Sig (0.05)   |
+|:---------------------|-----:|---------:|----------:|:-------------|
+| NaiveReverseWalk     | 1000 |  152.195 | 0         | Yes          |
+| HeuristicReverseWalk | 1000 |  152.223 | 0         | Yes          |
+| Es                   |  100 |   48.466 | 8.734e-71 | Yes          |
+| MapElites            |   24 |   24.018 | 8.634e-18 | Yes          |
+```
 ### 6. How to run the code
 ```
 pip install -r requirements.txt
