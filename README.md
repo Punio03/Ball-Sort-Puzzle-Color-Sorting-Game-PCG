@@ -7,6 +7,11 @@
 ---
 
 ## 1. Introduction
+This project explores procedural generation of **Ball Sort Puzzle** levels using **evolutionary algorithms**.
+The goal is to investigate whether these methods can generate solvable and diverse puzzles comparable to levels produced by a classical **BFS-based search**. 
+By comparing algorithmic and deterministic generation techniques, we aim to evaluate the potential of PCG to improve puzzle variety, difficulty control, and generation efficiency. The study contributes to understanding the applicability of evolutionary PCG methods in mobile puzzle games.
+
+## 2. Background and Literature
 Mobile puzzle games are widely popular, but many of them suffer from repetitive or poorly designed levels, which negatively impacts player engagement. 
 Designing a large number of high-quality puzzle levels manually is difficult and time-consuming, 
 making it a common bottleneck in puzzle game development.
@@ -15,7 +20,6 @@ Procedural Content Generation (PCG) provides a way to automatically generate puz
 Although PCG has been extensively studied, puzzle generation remains a relatively underexplored area, as highlighted in existing surveys on procedural puzzle generation. 
 In this project, the Ball Sort Puzzle is used as a test case to explore whether algorithmic generation methods can improve level variety and quality compared to traditional approaches.
 
-## 2. Background and Literature
 [Procedural Puzzle Generation: A Survey](https://www.researchgate.net/publication/333226463_Procedural_Puzzle_Generation_A_Survey)
 
 ## 3. Methodology
