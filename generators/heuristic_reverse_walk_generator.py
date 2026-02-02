@@ -32,6 +32,6 @@ class HeuristicReverseWalkGenerator(BaseGenerator):
                 last_move = chosen_move
 
             candidate_logic = Logic(flasks)
-            is_win, _ = self.solver.solve(candidate_logic)
+            is_win, _, _ = self.solver.solve(candidate_logic)
             if is_win:
                 return candidate_logic

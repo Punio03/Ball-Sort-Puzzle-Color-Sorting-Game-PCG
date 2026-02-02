@@ -57,7 +57,7 @@ class EsGenerator(BaseGenerator):
 
     def _calculate_fitness(self, path: List[Tuple[int, int]]) -> int:
         candidate_logic = self._simulate_path(path)
-        solved, solution_path = self.solver.solve(candidate_logic)
+        solved, _, solution_path = self.solver.solve(candidate_logic)
 
         if not solved:
             return 0

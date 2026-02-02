@@ -1,20 +1,19 @@
 import random
 import math
-import copy
 import numpy as np
 
 from tqdm import tqdm
 
 from game.logic import Logic, Flask
 from generators.base_generator import EvolutionaryGenerator
-from generators.naive_random_walk_generator import NaiveRandomWalkGenerator
+from generators.heuristic_reverse_walk_generator import HeuristicReverseWalkGenerator
 
 
 class MapElitesGenerator(EvolutionaryGenerator):
     def fitness(self, chromosome):
         score = 0
 
-        solvable, path = self.solver.solve(chromosome)
+        solvable, _, path = self.solver.solve(chromosome)
 
         if solvable:
             score += 100
@@ -89,19 +88,22 @@ class MapElitesGenerator(EvolutionaryGenerator):
 
         self.min_difficulty = min_difficulty
 
-        epochs = kwargs.get("epochs", 1000)
-        mut_rate = kwargs.get("mut_rate", 0.01)
-        batch_size = kwargs.get("batch_size", 100)
+        epochs = kwargs.get("epochs", 500)
+        mut_rate = kwargs.get("mut_rate", 0.5)
+        batch_size = kwargs.get("batch_size", 10)
 
-        generator = NaiveRandomWalkGenerator(
-            self.solver, self.num_flasks, self.num_colors
+        generator = HeuristicReverseWalkGenerator(
+            solver=self.solver,
+            num_flasks=self.num_flasks,
+            flask_size=self.flask_size,
+            num_colors=self.num_colors
         )
-        population = [generator.generate(self.flask_size, 5) for _ in range(batch_size)]
+        population = [generator.generate() for _ in range(batch_size)]
 
         for chromosome in population:
             self.place(map_elites, chromosome)
 
-        with open("save.csv", "w") as f:
+        with open("save2.csv", "w") as f:
             f.write("epoch;avg;max;min;size\n")
             for epoch in tqdm(range(epochs)):
                 population = self.update(map_elites, mut_rate, batch_size)
@@ -114,7 +116,7 @@ class MapElitesGenerator(EvolutionaryGenerator):
         best_map = None
         best_score = 0
         
-        with open('map_es_flasks3.txt', 'w') as f:
+        with open('map_es_flasks2.txt', 'w') as f:
             for chromosome in population:
                 for flask in chromosome.board:
                     f.write(f"{flask.balls} ")
